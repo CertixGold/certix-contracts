@@ -1,0 +1,32 @@
+{
+    "name": "wxaut-contracts",
+    "version": "1.0.0",
+    "description": "Discover wXAUT, an innovative project designed to extend the reach of Tether Gold (XAUT) beyond Ethereum.",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/CertixGold/wXAUT-contracts.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/CertixGold/wXAUT-contracts/issues"
+    },
+    "homepage": "https://github.com/CertixGold/wXAUT-contracts#readme",
+    "dependencies": {
+      "@openzeppelin/contracts": "v5.0.2",
+      "@openzeppelin/contracts-upgradeable": "v5.0.2",
+      "@openzeppelin/test-helpers": "^0.5.16",
+      "@openzeppelin/truffle-upgrades": "^1.21.0",
+      "@truffle/hdwallet-provider": "^2.1.15",
+      "bignumber.js": "^9.1.2",
+      "chai": "^4.3.10",
+      "chai-bignumber": "^3.1.0",
+      "dotenv": "^16.3.1"
+    }
+  }
+  
