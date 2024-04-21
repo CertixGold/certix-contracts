@@ -50,9 +50,11 @@ contract CertixNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradea
     mapping(string => uint256[]) public tokensByType;
     string[] public itemTypesList;
     address public usdtAddress;
+    address public xautAddress;
     uint256 public usdtPerGramGold;
     // Total weight in milligrams of Certix gold items
     uint256 public totalGoldWeightInMilligrams;
+    address public certixToken;
 
     // Contract initialization function, replacing the constructor for upgradeable contracts.
     function initialize(string memory _name, string memory _symbol) public initializer {
@@ -64,8 +66,10 @@ contract CertixNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradea
     // Function to mint new tokens, ensuring the supply limit for the item type has not been reached.
     function mint(address _to, string memory _itemType) public {
         ItemType storage item = itemTypes[_itemType];//Get the item
+        CERTIX_TOKEN.Tier memory tier = CERTIX_TOKEN(certixToken).getUserTier(msg.sender);
 
-        //TODO CALL TIER CONTRACT -> CanMint(msg.sender)
+        //Check if user's tier canMint
+        require(tier.canMint, "User tier not authorized to mint");
 
         //Check supply limit
         require(item.currentSupply < item.supplyLimit, "Supply limit reached for this item type");
@@ -74,16 +78,17 @@ contract CertixNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradea
 
         // Calculate the required USDT amount based on gold weight in milligrams
         // Assuming usdtPerGramGold is per gram, convert milligrams to grams for calculation
-        uint256 requiredUsdtAmount = (item.goldWeightInMilligrams * usdtPerGramGold) / 1000;
+        uint256 requiredUsdtAmount = getUSDTAmountForGoldWeight(item.goldWeightInMilligrams);
+
+        //Fees FROM Tier contract to cold wallet
+        uint256 mintingFees = (requiredUsdtAmount * tier.mintingFeePercentage) / 10000;
+        require(IERC20(usdtAddress).transferFrom(msg.sender, address(this), mintingFees), "USDT minting fees transfer failed");
+
+        // Transfer USDT from the user to the contract
+        require(IERC20(usdtAddress).transferFrom(msg.sender, address(this), requiredUsdtAmount), "USDT amount transfer failed");
 
         //Add item's weight
         addGoldWeight(item.goldWeightInMilligrams);
-
-        //TODO Fees FROM Tier contract to cold wallet
-
-        // Transfer USDT from the user to the contract
-        //TODO THINK ABOUT IT -> VAULT ?
-        require(IERC20(usdtAddress).transferFrom(msg.sender, address(this), requiredUsdtAmount), "USDT transfer failed");
 
         //Get token id
         uint256 tokenId = tokenIdCounter;
@@ -109,7 +114,7 @@ contract CertixNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradea
         // Convert item weight from milligrams to troy ounces for XAU₮
         // 1 troy ounce = 31.1035 grams = 31,103.5 milligrams
         // Using Solidity to avoid floating-point precision issues
-        uint256 xautAmount = (goldWeightInMilligrams * 10**18) / 31103500; // Adding 10**18 for precision
+        uint256 xautAmount = getXAUTAmountForGoldWeight(goldWeightInMilligrams); 
 
         _burn(_tokenId);
         itemType.burnCount += 1;
@@ -119,10 +124,18 @@ contract CertixNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradea
 
         // Ensure your contract has enough XAU₮ to perform the transfer
         //TODO from vault
-        //require(IERC20(xautAddress).transfer(msg.sender, xautAmount), "Failed to transfer XAU₮");
+        require(IERC20(xautAddress).transfer(msg.sender, xautAmount), "Failed to transfer XAUT");
 
         // Adjust the burn count
         itemTypes[tokenIdToItemType[_tokenId]].burnCount += 1;
+    }
+
+    function getUSDTAmountForGoldWeight(uint256 _goldWeightInMilligrams) public view returns(uint256){
+        return (_goldWeightInMilligrams * usdtPerGramGold) / 1000;
+    }
+
+    function getXAUTAmountForGoldWeight(uint256 _goldWeightInMilligrams) public pure returns(uint256){
+        return (_goldWeightInMilligrams * 10**18) / 31103500;// Adding 10**18 for precision
     }
 
     // Function to add gold weight when a new Certix NFT is minted
@@ -193,20 +206,37 @@ contract CertixNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradea
         }
     }
 
-    // Function to retrieve details for a list of item types.
-    function getItemsDetails(string[] memory _itemTypes) public view returns (ItemType[] memory) {
-        ItemType[] memory itemsDetails = new ItemType[](_itemTypes.length);
-        for (uint256 i = 0; i < _itemTypes.length; i++) {
+    // Function to retrieve details for a range of item types with optional metadata retrieval.
+    function getItemsDetails(string[] memory _itemTypes, bool only1Metadata, uint256 start, uint256 end) public view returns (ItemType[] memory) {
+        require(start < end, "Invalid range");
+
+        // Correction de la condition
+        if (end > _itemTypes.length) {
+            end = _itemTypes.length;
+        }
+
+        // Calculating the number of items to include in the response
+        uint256 rangeSize = end - start;
+        ItemType[] memory itemsDetails = new ItemType[](rangeSize);
+        uint256 count = 0;
+        
+
+        for (uint256 i = start; i < end; i++) {
             if (itemTypes[_itemTypes[i]].supplyLimit != 0) { // Ensure the item type exists
-                itemsDetails[i] = itemTypes[_itemTypes[i]];
+                itemsDetails[count] = itemTypes[_itemTypes[i]];
+                if (only1Metadata && itemTypes[_itemTypes[i]].metadataUris.length > 0) {
+                    itemsDetails[count].metadataUris = new string[](1);
+                    itemsDetails[count].metadataUris[0] = itemTypes[_itemTypes[i]].metadataUris[0];
+                }
+                count++;
             }
         }
         return itemsDetails;
     }
 
-    // Function to retrieve details for all item types.
-    function getAllItemsDetails() public view returns (ItemType[] memory) {
-        return getItemsDetails(itemTypesList);
+    // Function to retrieve details for all item types with pagination.
+    function getAllItemsDetails(bool only1Metadata, uint256 start, uint256 end) public view returns (ItemType[] memory) {
+        return getItemsDetails(itemTypesList, only1Metadata, start, end);
     }
 
     // Function to retrieve details for all item types.
@@ -233,15 +263,27 @@ contract CertixNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradea
         return super._update(to, tokenId, auth);
     }
 
-    function setUsdtAddress(address _usdtAddress) public onlyOwner {
-        usdtAddress = _usdtAddress;
-    }
-
     function setUsdtPerGramGold(uint256 _usdtPerGramGold) public onlyOwner {
         usdtPerGramGold = _usdtPerGramGold;
     }
 
+    function setUsdtAddress(address _usdtAddress) public onlyOwner {
+        usdtAddress = _usdtAddress;
+    }
+
     function withdrawUsdt(uint256 _amount, address _to) public onlyOwner {
         require(IERC20(usdtAddress).transfer(_to, _amount), "USDT transfer failed");
+    }
+
+    function setXAUTAddress(address _xautAddress) public onlyOwner {
+        xautAddress = _xautAddress;
+    }
+
+    function withdrawXAUT(uint256 _amount, address _to) public onlyOwner {
+        require(IERC20(xautAddress).transfer(_to, _amount), "XAUT transfer failed");
+    }
+
+    function setCertixTokenAddress(address _certixToken) public onlyOwner {
+        certixToken = _certixToken;
     }
 }

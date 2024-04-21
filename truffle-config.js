@@ -179,8 +179,15 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.20"
-    }
+      version: "0.8.20",
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs: 200 // Adjust this number based on your deployment needs
+        }
+      }
+    },
+    
   },
 
   solidity: {

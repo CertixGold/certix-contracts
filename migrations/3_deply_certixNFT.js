@@ -5,7 +5,7 @@ const FIRST = true
 if(FIRST){
     module.exports = async function (deployer) {
         const ethereumNetworkId = 0;
-        await deployProxy(CertixNFT, ["CtxNFT", "CtxNFT"], { deployer, initializer: 'initialize' });
+        await deployProxy(CertixNFT, ["Certix Gold NFTs", "CertixNFTs"], { deployer, initializer: 'initialize' });
     };
 }else{
     module.exports = async function (deployer) {

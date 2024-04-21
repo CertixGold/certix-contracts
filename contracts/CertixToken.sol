@@ -47,9 +47,9 @@ contract CertixToken is Initializable, ERC20BurnableUpgradeable, ERC20CappedUpgr
     
     function initializeTiers() internal {
         // Initialize tiers with specified attributes
-        tiers.push(Tier("NO_TIER", 0, false, false, false, false, 0, 0, 50, 100, 100, 100)); // Maximum fees and no permissions
-        tiers.push(Tier("Pioneer", 250e18, false, true, false, false, 1, 0, 50, 0, 300, 0));
-        tiers.push(Tier("Prospector", 1000e18, true, true, false, false, 2, 0, 40, 300, 200, 0));
+        tiers.push(Tier("NO_TIER", 0, false, false, false, false, 0, 0, 50, 9999, 9999, 9999)); // Maximum fees and no permissions
+        tiers.push(Tier("Pioneer", 250e18, false, true, false, false, 1, 0, 50, 9999, 300, 9999));
+        tiers.push(Tier("Prospector", 1000e18, true, true, false, false, 2, 0, 40, 300, 200, 9999));
         tiers.push(Tier("Artisan", 2500e18, true, true, true, true, 3, 32000, 30, 200, 100, 300));
         tiers.push(Tier("Baron", 10000e18, true, true, true, true, 5, 70000, 20, 100, 50, 200));
         tiers.push(Tier("Emperor", 20000e18, true, true, true, true, 10, type(uint256).max, 10, 0, 0, 100));

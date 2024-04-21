@@ -1,0 +1,202 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xb5f3a608099CC9742D9aB2DfA3F5e4Ff21eF4EDE",
+    "txHash": "0xd9197c520726fecba2e753862786d53115c4fe164c25bf941f05586ca8726ec0"
+  },
+  "proxies": [
+    {
+      "address": "0xe078BE1e55077Aea187455a23245CD9C1a4f84EE",
+      "txHash": "0x26651e19f763e8d899e8db251add2f9bd5ddc7bc1cf41a609fbd19fe1e161772",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xd0858254FF644F071ED24fDb9D80661949232061",
+      "txHash": "0x231744a858b3fa27fb5a0cdf881016e9a359bd36dc37f93524311b6cfb784c90",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "723facfe6f6261d8c9bdb53e4cd1cf2ed356df22a96187a1ff4ff65a297f821f": {
+      "address": "0x5D65F76fbE9141C18543FEE6c3038B3Fd262007d",
+      "txHash": "0xff8374a254802051f23250176ab2b440f241e4a12f3d94afe87168cba66015aa",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "contract": "CertixToken",
+            "label": "blacklist",
+            "type": "t_mapping(t_address,t_bool)",
+            "src": "../project:/contracts/CertixToken.sol:28"
+          },
+          {
+            "contract": "CertixToken",
+            "label": "skipBurnFeesList",
+            "type": "t_mapping(t_address,t_bool)",
+            "src": "../project:/contracts/CertixToken.sol:29"
+          },
+          {
+            "contract": "CertixToken",
+            "label": "tiers",
+            "type": "t_array(t_struct(Tier)6891_storage)dyn_storage",
+            "src": "../project:/contracts/CertixToken.sol:31"
+          }
+        ],
+        "types": {
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)"
+          },
+          "t_address": {
+            "label": "address"
+          },
+          "t_bool": {
+            "label": "bool"
+          },
+          "t_array(t_struct(Tier)6891_storage)dyn_storage": {
+            "label": "struct CertixToken.Tier[]"
+          },
+          "t_struct(Tier)6891_storage": {
+            "label": "struct CertixToken.Tier",
+            "members": [
+              {
+                "label": "name",
+                "type": "t_string_storage"
+              },
+              {
+                "label": "minCertixBalance",
+                "type": "t_uint256"
+              },
+              {
+                "label": "canMint",
+                "type": "t_bool"
+              },
+              {
+                "label": "canMelt",
+                "type": "t_bool"
+              },
+              {
+                "label": "canMerge",
+                "type": "t_bool"
+              },
+              {
+                "label": "hasAuctionAccess",
+                "type": "t_bool"
+              },
+              {
+                "label": "magicItemLootingChance",
+                "type": "t_uint256"
+              },
+              {
+                "label": "maxWeightForMergeInMilligrams",
+                "type": "t_uint256"
+              },
+              {
+                "label": "transactionBurnFee",
+                "type": "t_uint256"
+              },
+              {
+                "label": "mintingFeePercentage",
+                "type": "t_uint256"
+              },
+              {
+                "label": "meltingFeePercentage",
+                "type": "t_uint256"
+              },
+              {
+                "label": "auctionFeePercentage",
+                "type": "t_uint256"
+              }
+            ]
+          },
+          "t_string_storage": {
+            "label": "string"
+          },
+          "t_uint256": {
+            "label": "uint256"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)"
+          },
+          "t_mapping(t_address,t_mapping(t_address,t_uint256))": {
+            "label": "mapping(address => mapping(address => uint256))"
+          },
+          "t_uint64": {
+            "label": "uint64"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "../@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Pausable": [
+            {
+              "contract": "PausableUpgradeable",
+              "label": "_paused",
+              "type": "t_bool",
+              "src": "../@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol:21"
+            }
+          ],
+          "erc7201:openzeppelin.storage.ERC20Capped": [
+            {
+              "contract": "ERC20CappedUpgradeable",
+              "label": "_cap",
+              "type": "t_uint256",
+              "src": "../@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20CappedUpgradeable.sol:15"
+            }
+          ],
+          "erc7201:openzeppelin.storage.ERC20": [
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_balances",
+              "type": "t_mapping(t_address,t_uint256)",
+              "src": "../@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:38"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_allowances",
+              "type": "t_mapping(t_address,t_mapping(t_address,t_uint256))",
+              "src": "../@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:40"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_totalSupply",
+              "type": "t_uint256",
+              "src": "../@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:42"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_name",
+              "type": "t_string_storage",
+              "src": "../@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:44"
+            },
+            {
+              "contract": "ERC20Upgradeable",
+              "label": "_symbol",
+              "type": "t_string_storage",
+              "src": "../@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol:45"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "../@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "../@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
